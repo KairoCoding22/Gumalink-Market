@@ -9,7 +9,26 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
 using namespace std;
+
+// ─────────────────────────────────────────────
+//  CLEAR SCREEN  (cross-platform)
+// ─────────────────────────────────────────────
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void pauseScreen() {
+    cout << "\n   \033[90m  ↩  Press Enter to continue...\033[0m";
+    cin.ignore();
+    cin.get();
+}
 
 // ─────────────────────────────────────────────
 //  STRUCTURES
@@ -133,7 +152,7 @@ void loadAllData() {
     loadLaundries();
     loadPayments();
     loadInventory();
-    cout << "\n[Data loaded successfully.]\n";
+    cout << "\n   \033[1;32m  ✔  Data loaded successfully.\033[0m\n";
 }
 
 // ─────────────────────────────────────────────
@@ -189,7 +208,7 @@ void saveAllData() {
     saveLaundries();
     savePayments();
     saveInventory();
-    cout << "\n[All data saved to files.]\n";
+    cout << "\n   \033[1;32m  ✔  All data saved to files.\033[0m\n";
 }
 
 // ─────────────────────────────────────────────
@@ -272,7 +291,10 @@ void generateClaimReceipt(int laundryID) {
 // ─────────────────────────────────────────────
 
 void module1_CustomerInformation() {
-    cout << "\n--- 1. Customer Information ---\n";
+    clearScreen();
+    cout << "\n   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+    cout << "   \033[1;36m║\033[0m   \033[1;33m👕  [ 1 ]  CUSTOMER INFORMATION                    \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n\n";
     Customer c;
     cout << "Enter Customer ID    : "; cin >> c.id;
     cin.ignore();
@@ -324,7 +346,10 @@ void module1_CustomerInformation() {
 // ─────────────────────────────────────────────
 
 void module2_LaundryStatusTracking() {
-    cout << "\n--- 2. Laundry Status Tracking ---\n";
+    clearScreen();
+    cout << "\n   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+    cout << "   \033[1;36m║\033[0m   \033[1;33m🌀  [ 2 ]  LAUNDRY STATUS TRACKING                \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n\n";
     LaundryRecord lr;
     cout << "Enter Customer ID  : "; cin >> lr.customerID;
     cin.ignore();
@@ -356,7 +381,10 @@ void module2_LaundryStatusTracking() {
 // ─────────────────────────────────────────────
 
 void module3_PaymentSystem() {
-    cout << "\n--- 3. Payment System ---\n";
+    clearScreen();
+    cout << "\n   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+    cout << "   \033[1;36m║\033[0m   \033[1;33m💳  [ 3 ]  PAYMENT SYSTEM                          \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n\n";
     int lid;
     cout << "Enter Laundry ID: "; cin >> lid;
 
@@ -417,7 +445,10 @@ void module3_PaymentSystem() {
 // ─────────────────────────────────────────────
 
 void module4_ClaimReceipt() {
-    cout << "\n--- 4. Claim Receipt ---\n";
+    clearScreen();
+    cout << "\n   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+    cout << "   \033[1;36m║\033[0m   \033[1;33m🧾  [ 4 ]  CLAIM RECEIPT                           \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n\n";
     int cid;
     cout << "Enter Customer ID: "; cin >> cid;
 
@@ -443,7 +474,10 @@ void module4_ClaimReceipt() {
 // ─────────────────────────────────────────────
 
 void module5_InventoryMonitoring() {
-    cout << "\n--- 5. Inventory and Detergent Monitoring ---\n";
+    clearScreen();
+    cout << "\n   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+    cout << "   \033[1;36m║\033[0m   \033[1;33m🧴  [ 5 ]  INVENTORY & DETERGENT MONITORING        \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n\n";
 
     // Display inventory table (2D Array for history)
     cout << "\n" << left
@@ -513,9 +547,19 @@ void module5_InventoryMonitoring() {
 // ─────────────────────────────────────────────
 
 void module6_Exit() {
+    clearScreen();
     saveAllData();
-    cout << "\nThank you! Program Terminated.\n";
-    cout << "================================\n";
+    cout << "\n";
+    cout << "   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+    cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m║\033[0m      \033[1;33m✦  Thank you for using DJ Laundry Shop!  ✦     \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m║\033[0m         \033[35m~~ Keep it clean, keep it fresh! ~~          \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m║\033[0m              \033[90m[ All data saved to files ]              \033[0m\033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+    cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n";
+    cout << "\n";
 }
 
 // ─────────────────────────────────────────────
@@ -523,34 +567,77 @@ void module6_Exit() {
 // ─────────────────────────────────────────────
 
 int main() {
-    cout << "================================\n";
-    cout << "  DJ LAUNDRY SHOP MANAGEMENT   \n";
-    cout << "================================\n";
+    clearScreen();
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    //  SPLASH SCREEN
+    // ╚══════════════════════════════════════════════════════════════╝
+    cout << "\n";
+    cout << "   \033[36m+----------------------------------------------------------+\033[0m\n";
+    cout << "   \033[36m|                                                          |\033[0m\n";
+    cout << "   \033[36m|\033[0m  \033[1;34m ____      _      _       ____  __  __  _   _  ____  \033[0m  \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m  \033[1;34m|  _ \\ _  | |    | |     / __ \\|  \\/  || \\ | ||  _ \\ \033[0m  \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m  \033[1;34m| | | | | | |    | |    | |  | | |\\/| ||  \\| || | | |\033[0m  \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m  \033[1;34m| |_| | |_| |    | |___ | |__| | |  | || |\\  || |_| |\033[0m  \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m  \033[1;34m|____/ \\___/|    |_____| \\____/|_|  |_||_| \\_||____/ \033[0m  \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m                                                          \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m        \033[1;33m~~ Wash. Dry. Deliver. With Style. ~~\033[0m          \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m                                                          \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m   \033[1;37m.------. .------. .------. .------. .------. .------.\033[0m \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m   \033[1;37m|LAUNDR| |Y SHOP| | MANA | |GEMEN | |T SYS | |TEM ! |\033[0m \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m   \033[1;37m'------' '------' '------' '------' '------' '------'\033[0m \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m                                                          \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m         \033[35m>> Bubbles  >>  Spin  >>  Fresh & Clean <<\033[0m       \033[36m|\033[0m\n";
+    cout << "   \033[36m|\033[0m                                                          \033[36m|\033[0m\n";
+    cout << "   \033[36m+----------------------------------------------------------+\033[0m\n";
+    cout << "\n";
+    cout << "   \033[90mInitializing system";
+    for(int i = 0; i < 3; i++) { cout << "."; cout.flush(); }
+    cout << "\033[0m\n\n";
 
     // Load data from files (File Stream)
     loadAllData();
+    pauseScreen();
 
     bool running = true;
     while (running) {           // LOOP: main program loop
-        // Display Main Menu (Input/Output)
-        cout << "\n╔══════════════════════════════╗\n";
-        cout << "║        MAIN MENU             ║\n";
-        cout << "╠══════════════════════════════╣\n";
-        cout << "║ 1. Customer Information      ║\n";
-        cout << "║ 2. Laundry Status Tracking   ║\n";
-        cout << "║ 3. Payment System            ║\n";
-        cout << "║ 4. Claim Receipt             ║\n";
-        cout << "║ 5. Inventory & Detergent     ║\n";
-        cout << "║ 6. Exit                      ║\n";
-        cout << "╚══════════════════════════════╝\n";
-        cout << "Enter Choice: ";
+        clearScreen();
+
+        // ── HEADER ───────────────────────────────────────────────────
+        cout << "\n";
+        cout << "   \033[1;36m╔══════════════════════════════════════════════════════╗\033[0m\n";
+        cout << "   \033[1;36m║\033[0m  \033[1;33m  ◈  DJ LAUNDRY SHOP MANAGEMENT SYSTEM  ◈         \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m  \033[90m       ~ Fresh Clothes, Happy Customers ~          \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m╠══════════════════════════════════════════════════════╣\033[0m\n";
+
+        // ── MENU ITEMS ───────────────────────────────────────────────
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m   \033[1;37m[ 1 ]\033[0m  \033[34m👕  Customer Information                    \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m   \033[1;37m[ 2 ]\033[0m  \033[34m🌀  Laundry Status Tracking                 \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m   \033[1;37m[ 3 ]\033[0m  \033[34m💳  Payment System                          \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m   \033[1;37m[ 4 ]\033[0m  \033[34m🧾  Claim Receipt                           \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m   \033[1;37m[ 5 ]\033[0m  \033[34m🧴  Inventory & Detergent Monitoring        \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m   \033[1;37m[ 6 ]\033[0m  \033[31m🚪  Exit                                    \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m║\033[0m                                                      \033[1;36m║\033[0m\n";
+
+        // ── FOOTER ───────────────────────────────────────────────────
+        cout << "   \033[1;36m╠══════════════════════════════════════════════════════╣\033[0m\n";
+        cout << "   \033[1;36m║\033[0m  \033[90m  Tip: Enter the number of your choice below.       \033[0m\033[1;36m║\033[0m\n";
+        cout << "   \033[1;36m╚══════════════════════════════════════════════════════╝\033[0m\n";
+        cout << "\n   \033[1;33m  ➤  Enter Choice [1-6]: \033[0m";
 
         int choice;
         cin >> choice;
 
         // Validate choice (Decision diamond)
         if (choice < 1 || choice > 6) {
-            cout << "\nInvalid choice! Please enter 1-6.\n";
+            cout << "\n   \033[1;31m  ✖  Invalid choice! Please enter 1-6.\033[0m\n";
+            pauseScreen();
             continue;   // loop back (No branch)
         }
 
@@ -565,9 +652,7 @@ int main() {
         }
 
         if (running) {
-            cout << "\n[Press Enter to return to Main Menu...]";
-            cin.ignore();
-            cin.get();
+            pauseScreen();
         }
     }
 
