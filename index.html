@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GumaLink Market</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ===== TOAST NOTIFICATION ===== -->
+<div id="toast" class="toast"></div>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-guma">GumaLink</span><span class="brand-market"> Market</span>
+  </div>
+  <div class="nav-search">
+    <input type="text" id="globalSearch" placeholder="Search products, sellers…" oninput="handleGlobalSearch(this.value)"/>
+    <button class="btn-search" onclick="handleGlobalSearch(document.getElementById('globalSearch').value)">&#128269;</button>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="showPage('shop')">&#127807; Shop</button>
+    <button class="nav-btn" onclick="showPage('seller')">&#128200; Sell</button>
+    <button class="nav-btn" onclick="showPage('admin')">&#9881; Admin</button>
+    <button class="nav-btn cart-btn" onclick="openCart()">
+      &#128722; Cart <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="nav-btn" onclick="openModal('loginModal')">&#128100; Login</button>
+  </div>
+</nav>
+
+<!-- ===== PAGES ===== -->
+<main id="appMain">
+
+  <!-- ==============================
+       PAGE: SHOP / BUYER
+  ============================== -->
+  <div id="page-shop" class="page active">
+
+    <!-- Hero Banner -->
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Buy Fresh,<br/>Buy <span class="hero-accent">Local</span> in Gumaca!</h1>
+        <p>Fresh farm produce delivered from trusted local sellers in Quezon Province.</p>
+        <button class="btn-primary" onclick="document.getElementById('shopSection').scrollIntoView({behavior:'smooth'})">Shop Now &#8595;</button>
+      </div>
+      <div class="hero-categories">
+        <div class="cat-pill" onclick="filterCategory('Vegetables')">&#129382; Vegetables</div>
+        <div class="cat-pill" onclick="filterCategory('Fruits')">&#127815; Fruits</div>
+        <div class="cat-pill" onclick="filterCategory('Seafood')">&#128031; Seafood</div>
+        <div class="cat-pill" onclick="filterCategory('Rice')">&#127807; Rice</div>
+        <div class="cat-pill" onclick="filterCategory('Poultry')">&#129413; Poultry</div>
+        <div class="cat-pill" onclick="filterCategory('All')">&#10024; All</div>
+      </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section id="shopSection" class="shop-section">
+      <div class="shop-sidebar">
+        <h3>Filter by Category</h3>
+        <div id="categoryList" class="category-list"></div>
+        <hr/>
+        <h3>Sort By</h3>
+        <select id="sortSelect" class="filter-select" onchange="applyFilters()">
+          <option value="default">Default</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+          <option value="newest">Newest</option>
+        </select>
+        <hr/>
+        <h3>Price Range</h3>
+        <div class="price-range">
+          <input type="number" id="priceMin" placeholder="Min ₱" oninput="applyFilters()"/>
+          <span>—</span>
+          <input type="number" id="priceMax" placeholder="Max ₱" oninput="applyFilters()"/>
+        </div>
+        <hr/>
+        <h3>Availability</h3>
+        <label class="check-label"><input type="checkbox" id="inStockOnly" onchange="applyFilters()"/> In Stock Only</label>
+      </div>
+
+      <div class="shop-main">
+        <div class="shop-header">
+          <h2>Product Listings</h2>
+          <span id="resultCount" class="result-count"></span>
+        </div>
+        <div id="productGrid" class="product-grid"></div>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section" id="reviewsSection">
+      <h2>&#11088; Customer Reviews</h2>
+      <div id="reviewsList" class="reviews-list"></div>
+      <div class="review-form-card">
+        <h3>Leave a Review</h3>
+        <input type="text" id="reviewProduct" placeholder="Product name" class="input-field"/>
+        <div class="star-picker" id="starPicker">
+          <span onclick="setRating(1)">&#9733;</span>
+          <span onclick="setRating(2)">&#9733;</span>
+          <span onclick="setRating(3)">&#9733;</span>
+          <span onclick="setRating(4)">&#9733;</span>
+          <span onclick="setRating(5)">&#9733;</span>
+        </div>
+        <textarea id="reviewText" placeholder="Share your experience…" class="input-field textarea"></textarea>
+        <input type="text" id="reviewerName" placeholder="Your name" class="input-field"/>
+        <button class="btn-primary" onclick="submitReview()">Submit Review</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==============================
+       PAGE: SELLER DASHBOARD
+  ============================== -->
+  <div id="page-seller" class="page">
+    <div class="dashboard-layout">
+      <aside class="dash-sidebar">
+        <div class="dash-brand">&#127807; Seller Hub</div>
+        <nav class="dash-nav">
+          <button class="dash-nav-btn active" onclick="showSellerTab('overview')">&#128200; Overview</button>
+          <button class="dash-nav-btn" onclick="showSellerTab('products')">&#128230; My Products</button>
+          <button class="dash-nav-btn" onclick="showSellerTab('orders')">&#128203; Orders</button>
+          <button class="dash-nav-btn" onclick="showSellerTab('earnings')">&#128176; Earnings</button>
+          <button class="dash-nav-btn" onclick="showSellerTab('register')">&#128100; Register</button>
+        </nav>
+      </aside>
+
+      <div class="dash-content">
+
+        <!-- Overview Tab -->
+        <div id="seller-overview" class="seller-tab active">
+          <h2>Welcome, <span id="sellerName">Juan dela Cruz</span>!</h2>
+          <div class="stats-row">
+            <div class="stat-card"><div class="stat-num" id="statActive">5</div><div class="stat-label">Active Listings</div></div>
+            <div class="stat-card accent"><div class="stat-num" id="statPending">3</div><div class="stat-label">Pending Orders</div></div>
+            <div class="stat-card green"><div class="stat-num" id="statEarnings">₱8,200</div><div class="stat-label">Total Earnings</div></div>
+          </div>
+          <div class="quick-actions">
+            <button class="btn-primary" onclick="showSellerTab('products')">+ Add Product</button>
+            <button class="btn-secondary" onclick="showSellerTab('orders')">View Orders</button>
+          </div>
+          <h3>Recent Activity</h3>
+          <div id="recentActivity" class="activity-list"></div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="seller-products" class="seller-tab">
+          <div class="tab-header">
+            <h2>My Products</h2>
+            <button class="btn-primary" onclick="openModal('addProductModal')">+ Add New Product</button>
+          </div>
+          <div id="sellerProductList" class="seller-product-list"></div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="seller-orders" class="seller-tab">
+          <h2>Incoming Orders</h2>
+          <div id="sellerOrderList" class="order-list"></div>
+        </div>
+
+        <!-- Earnings Tab -->
+        <div id="seller-earnings" class="seller-tab">
+          <h2>Earnings Overview</h2>
+          <div class="earnings-chart-placeholder">
+            <div id="earningsBreakdown" class="earnings-breakdown"></div>
+          </div>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="seller-register" class="seller-tab">
+          <h2>Seller Registration</h2>
+          <div class="register-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="regName" class="input-field" placeholder="Juan dela Cruz"/>
+              </div>
+              <div class="form-group">
+                <label>Business Name</label>
+                <input type="text" id="regBusiness" class="input-field" placeholder="Juan's Farm"/>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="regEmail" class="input-field" placeholder="juan@example.com"/>
+              </div>
+              <div class="form-group">
+                <label>Phone / Mobile</label>
+                <input type="tel" id="regPhone" class="input-field" placeholder="09XXXXXXXXX"/>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Barangay / Address</label>
+                <input type="text" id="regAddress" class="input-field" placeholder="Brgy. Sampaloc, Gumaca"/>
+              </div>
+              <div class="form-group">
+                <label>Product Category</label>
+                <select id="regCategory" class="input-field filter-select">
+                  <option>Vegetables</option>
+                  <option>Fruits</option>
+                  <option>Seafood</option>
+                  <option>Rice</option>
+                  <option>Poultry</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>ID / Verification Document</label>
+              <input type="file" id="regDoc" class="input-field"/>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="regPass" class="input-field" placeholder="Create password"/>
+            </div>
+            <button class="btn-primary" onclick="registerSeller()">Register as Seller</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       PAGE: ADMIN PANEL
+  ============================== -->
+  <div id="page-admin" class="page">
+    <div class="dashboard-layout">
+      <aside class="dash-sidebar admin-sidebar">
+        <div class="dash-brand">&#9881; Admin Panel</div>
+        <nav class="dash-nav">
+          <button class="dash-nav-btn active" onclick="showAdminTab('overview')">&#128200; Dashboard</button>
+          <button class="dash-nav-btn" onclick="showAdminTab('sellers')">&#128101; Sellers</button>
+          <button class="dash-nav-btn" onclick="showAdminTab('products')">&#128230; Products</button>
+          <button class="dash-nav-btn" onclick="showAdminTab('orders')">&#128203; Orders</button>
+          <button class="dash-nav-btn" onclick="showAdminTab('notifications')">&#128276; Notifications</button>
+          <button class="dash-nav-btn" onclick="showAdminTab('reviews')">&#11088; Reviews</button>
+        </nav>
+      </aside>
+
+      <div class="dash-content">
+
+        <!-- Admin Overview -->
+        <div id="admin-overview" class="admin-tab active">
+          <h2>Admin Monitoring Dashboard</h2>
+          <div class="stats-row">
+            <div class="stat-card"><div class="stat-num" id="adminTotalSellers">0</div><div class="stat-label">Total Sellers</div></div>
+            <div class="stat-card accent"><div class="stat-num" id="adminTotalProducts">0</div><div class="stat-label">Products Listed</div></div>
+            <div class="stat-card green"><div class="stat-num" id="adminTotalOrders">0</div><div class="stat-label">Total Orders</div></div>
+            <div class="stat-card gold"><div class="stat-num" id="adminRevenue">₱0</div><div class="stat-label">Platform Revenue</div></div>
+          </div>
+          <h3>Platform Activity Log</h3>
+          <div id="adminActivityLog" class="activity-list"></div>
+        </div>
+
+        <!-- Sellers Tab -->
+        <div id="admin-sellers" class="admin-tab">
+          <h2>Registered Sellers</h2>
+          <table class="admin-table">
+            <thead><tr><th>Name</th><th>Business</th><th>Category</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="adminSellersTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="admin-products" class="admin-tab">
+          <h2>All Products</h2>
+          <table class="admin-table">
+            <thead><tr><th>Product</th><th>Seller</th><th>Price</th><th>Category</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="adminProductsTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="admin-orders" class="admin-tab">
+          <h2>All Orders</h2>
+          <table class="admin-table">
+            <thead><tr><th>Order ID</th><th>Buyer</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th></tr></thead>
+            <tbody id="adminOrdersTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="admin-notifications" class="admin-tab">
+          <h2>SMS & Email Notifications</h2>
+          <div class="notification-form">
+            <div class="form-group">
+              <label>Send To</label>
+              <select id="notifTarget" class="input-field filter-select">
+                <option value="all">All Users</option>
+                <option value="sellers">Sellers Only</option>
+                <option value="buyers">Buyers Only</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Notification Type</label>
+              <div class="notif-type-row">
+                <label class="check-label"><input type="checkbox" id="notifSMS" checked/> &#128241; SMS</label>
+                <label class="check-label"><input type="checkbox" id="notifEmail" checked/> &#9993; Email</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="notifSubject" class="input-field" placeholder="Notification subject…"/>
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="notifMessage" class="input-field textarea" placeholder="Type your message here…"></textarea>
+            </div>
+            <button class="btn-primary" onclick="sendNotification()">Send Notification &#128228;</button>
+          </div>
+          <h3>Sent Notifications</h3>
+          <div id="notifLog" class="notif-log"></div>
+        </div>
+
+        <!-- Reviews Management -->
+        <div id="admin-reviews" class="admin-tab">
+          <h2>Review & Rating Management</h2>
+          <div id="adminReviewsList" class="reviews-list"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ==============================
+     CART DRAWER
+============================== -->
+<div id="cartDrawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <h3>&#128722; Your Cart</h3>
+    <button onclick="closeCart()" class="close-btn">&#10005;</button>
+  </div>
+  <div id="cartItemsList" class="cart-items-list"></div>
+  <div class="cart-footer">
+    <div class="cart-total">Total: <strong id="cartTotal">₱0</strong></div>
+    <button class="btn-primary" onclick="openCheckout()">Proceed to Checkout</button>
+  </div>
+</div>
+<div id="cartOverlay" class="overlay" onclick="closeCart()"></div>
+
+<!-- ==============================
+     MODALS
+============================== -->
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay" onclick="closeModalOutside(event,'loginModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">&#10005;</button>
+    <h2>Login</h2>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchLoginTab('buyer')">Buyer</button>
+      <button class="tab-btn" onclick="switchLoginTab('seller')">Seller</button>
+      <button class="tab-btn" onclick="switchLoginTab('admin')">Admin</button>
+    </div>
+    <input type="email" id="loginEmail" class="input-field" placeholder="Email"/>
+    <input type="password" id="loginPass" class="input-field" placeholder="Password"/>
+    <button class="btn-primary full-width" onclick="doLogin()">Login</button>
+    <p class="modal-link">No account? <a href="#" onclick="openModal('loginModal'); showSellerTab('register'); showPage('seller')">Register as Seller</a></p>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div id="addProductModal" class="modal-overlay" onclick="closeModalOutside(event,'addProductModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addProductModal')">&#10005;</button>
+    <h2>Add New Product</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" id="prodName" class="input-field" placeholder="e.g. Fresh Tilapia"/>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="prodCategory" class="input-field filter-select">
+          <option>Vegetables</option><option>Fruits</option><option>Seafood</option><option>Rice</option><option>Poultry</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price (₱/kg)</label>
+        <input type="number" id="prodPrice" class="input-field" placeholder="120"/>
+      </div>
+      <div class="form-group">
+        <label>Stock (kg)</label>
+        <input type="number" id="prodStock" class="input-field" placeholder="50"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="prodDesc" class="input-field textarea" placeholder="Describe your product…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Available Date</label>
+      <input type="date" id="prodDate" class="input-field"/>
+    </div>
+    <div class="form-group">
+      <label>Product Emoji / Image URL</label>
+      <input type="text" id="prodEmoji" class="input-field" placeholder="🐟 or paste image URL"/>
+    </div>
+    <button class="btn-primary full-width" onclick="addProduct()">Add Product</button>
+  </div>
+</div>
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="modal-overlay" onclick="closeModalOutside(event,'checkoutModal')">
+  <div class="modal modal-lg">
+    <button class="modal-close" onclick="closeModal('checkoutModal')">&#10005;</button>
+    <h2>Checkout</h2>
+    <div class="checkout-layout">
+      <div class="checkout-left">
+        <h3>Order Summary</h3>
+        <div id="checkoutSummary" class="checkout-summary"></div>
+        <div class="checkout-total" id="checkoutTotal"></div>
+
+        <h3>Delivery Options</h3>
+        <label class="radio-label"><input type="radio" name="delivery" value="Home Delivery" checked onchange="updateDelivery(this.value)"/> &#127968; Home Delivery (+₱50)</label>
+        <label class="radio-label"><input type="radio" name="delivery" value="Pickup at Market" onchange="updateDelivery(this.value)"/> &#128722; Pickup at Market (Free)</label>
+
+        <h3>Reservation Date</h3>
+        <input type="date" id="reserveDate" class="input-field"/>
+
+        <h3>Payment Method</h3>
+        <label class="radio-label"><input type="radio" name="payment" value="Cash on Delivery" checked/> &#128181; Cash on Delivery</label>
+        <label class="radio-label"><input type="radio" name="payment" value="GCash"/> &#128240; GCash</label>
+        <label class="radio-label"><input type="radio" name="payment" value="PayMaya"/> &#128179; PayMaya</label>
+        <label class="radio-label"><input type="radio" name="payment" value="Credit Card"/> &#128179; Credit / Debit Card</label>
+      </div>
+      <div class="checkout-right">
+        <h3>Contact Details</h3>
+        <input type="text" id="buyerName" class="input-field" placeholder="Full Name"/>
+        <input type="text" id="buyerPhone" class="input-field" placeholder="Phone Number"/>
+        <input type="email" id="buyerEmail" class="input-field" placeholder="Email Address"/>
+        <textarea id="buyerAddress" class="input-field textarea" placeholder="Delivery Address (if home delivery)"></textarea>
+
+        <div id="gcashFields" class="payment-fields hidden">
+          <h4>GCash Details</h4>
+          <input type="text" class="input-field" placeholder="GCash Number"/>
+        </div>
+        <div id="cardFields" class="payment-fields hidden">
+          <h4>Card Details</h4>
+          <input type="text" class="input-field" placeholder="Card Number"/>
+          <div class="form-row">
+            <input type="text" class="input-field" placeholder="MM/YY"/>
+            <input type="text" class="input-field" placeholder="CVV"/>
+          </div>
+        </div>
+
+        <button class="btn-primary full-width" onclick="placeOrder()" style="margin-top:1.5rem">&#9989; Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Success Modal -->
+<div id="successModal" class="modal-overlay" onclick="closeModalOutside(event,'successModal')">
+  <div class="modal text-center">
+    <div class="success-icon">&#10003;</div>
+    <h2>Order Placed!</h2>
+    <p id="successMsg"></p>
+    <button class="btn-primary" onclick="closeModal('successModal')">Continue Shopping</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
