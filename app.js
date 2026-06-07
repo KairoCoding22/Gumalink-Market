@@ -1,11 +1,3 @@
-/* ============================================
-   GUMALINK MARKET — app.js
-   Full Feature Implementation
-   Features: Seller Reg, Product Dashboard,
-   Search & Filter, Orders, Payments,
-   SMS/Email Notifs, Admin Panel, Reviews
-============================================ */
-
 // ============ STATE ============
 let state = {
   currentPage: 'shop',
